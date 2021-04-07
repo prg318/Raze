@@ -350,7 +350,7 @@ void UserConfig::ProcessOptions()
 
 	static const char* defs[] = { "-def", "-h", nullptr };
 	Args->CollectFiles("-def", defs, ".def");
-	DefaultDef = Args->CheckValue("-def");
+	UserDef = Args->CheckValue("-def");
 
 	if (DefaultCon.IsEmpty())
 	{
@@ -1311,12 +1311,16 @@ void LoadDefinitions()
 {
 	loaddefinitionsfile("engine/engine.def");	// Internal stuff that is required.
 
+	const char* userdef = userConfig.UserDef;
 	const char* defsfile = G_DefFile();
 
 	cycle_t deftimer;
 	deftimer.Reset();
 	deftimer.Clock();
-	if (!loaddefinitionsfile(defsfile, true))
+	int result;
+	if (userdef && *userdef) result = loaddefinitionsfile(userdef, true);
+	else result = loaddefinitionsfile(defsfile, true, true);
+	if (!result)
 	{
 		deftimer.Unclock();
 		Printf(PRINT_NONOTIFY, "Definitions file \"%s\" loaded in %.3f ms.\n", defsfile, deftimer.TimeMS());
