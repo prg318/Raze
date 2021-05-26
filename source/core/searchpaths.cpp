@@ -248,7 +248,8 @@ TArray<FString> CollectSearchPaths()
 	for (auto &str : searchpaths)
 	{
 		str.Substitute("\\", "/");
-		str.Substitute("//", "/");	// Double slashes can happen when constructing paths so just get rid of them here.
+		// NOTE: The below line will mangle unmapped network share (eg: //server/share/path/to/file)
+		//str.Substitute("//", "/");	// Double slashes can happen when constructing paths so just get rid of them here.
 		if (str.Back() == '/') str.Truncate(str.Len() - 1);
 	}
 	return searchpaths;
